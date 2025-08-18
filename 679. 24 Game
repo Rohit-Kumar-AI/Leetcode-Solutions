@@ -1,0 +1,31 @@
+class Solution:
+    def judgePoint24(self, cards):
+        EPSILON = 1e-6
+
+        def solve(nums):
+            if len(nums) == 1:
+                return abs(nums[0] - 24) < EPSILON
+
+            for i in range(len(nums)):
+                for j in range(len(nums)):
+                    if i != j:
+                        next_nums = [nums[k] for k in range(len(nums)) if k != i and k != j]
+                        a, b = nums[i], nums[j]
+
+                        results = [
+                            a + b,
+                            a - b,
+                            b - a,
+                            a * b,
+                        ]
+                        if abs(b) > EPSILON:
+                            results.append(a / b)
+                        if abs(a) > EPSILON:
+                            results.append(b / a)
+
+                        for res in results:
+                            if solve(next_nums + [res]):
+                                return True
+            return False
+
+        return solve([float(x) for x in cards])
