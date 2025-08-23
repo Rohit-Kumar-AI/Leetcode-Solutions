@@ -1,0 +1,77 @@
+class Solution {
+public:
+    int minimumSum(vector<vector<int>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        int ans = INT_MAX;
+        
+        auto area = [&](int si, int ei, int sj, int ej) {
+            int minr = m, minc = n, maxr = -1, maxc = -1;
+            for (int i = si; i <= ei; ++i) {
+                for (int j = sj; j <= ej; ++j) {
+                    if (grid[i][j] == 1) {
+                        minr = min(minr, i);
+                        minc = min(minc, j);
+                        maxr = max(maxr, i);
+                        maxc = max(maxc, j);
+                    }
+                }
+            }
+            if (maxr < 0) return 0; 
+            return (maxr - minr + 1) * (maxc - minc + 1);
+        };
+        
+        for (int r1 = 0; r1 < m; ++r1) {
+            for (int r2 = r1 + 1; r2 < m; ++r2) {
+                int a = area(0, r1, 0, n-1);
+                int b = area(r1+1, r2, 0, n-1);
+                int c = area(r2+1, m-1, 0, n-1);
+                ans = min(ans, a + b + c);
+            }
+        }
+        
+        for (int c1 = 0; c1 < n; ++c1) {
+            for (int c2 = c1 + 1; c2 < n; ++c2) {
+                int a = area(0, m-1, 0, c1);
+                int b = area(0, m-1, c1+1, c2);
+                int c = area(0, m-1, c2+1, n-1);
+                ans = min(ans, a + b + c);
+            }
+        }
+        
+        for (int r = 0; r < m - 1; ++r) {
+            for (int c = 0; c < n - 1; ++c) {
+                int a = area(0, r, 0, n-1);
+                int b = area(r+1, m-1, 0, c);
+                int c2 = area(r+1, m-1, c+1, n-1);
+                ans = min(ans, a + b + c2);
+            }
+        }
+        for (int r = 1; r < m; ++r) {
+            for (int c = 0; c < n - 1; ++c) {
+                int a = area(r, m-1, 0, n-1);
+                int b = area(0, r-1, 0, c);
+                int c2 = area(0, r-1, c+1, n-1);
+                ans = min(ans, a + b + c2);
+            }
+        }
+        
+        for (int c = 0; c < n - 1; ++c) {
+            for (int r = 0; r < m - 1; ++r) {
+                int a = area(0, m-1, 0, c);
+                int b = area(0, r, c+1, n-1);
+                int c2 = area(r+1, m-1, c+1, n-1);
+                ans = min(ans, a + b + c2);
+            }
+        }
+        for (int c = 1; c < n; ++c) {
+            for (int r = 0; r < m - 1; ++r) {
+                int a = area(0, m-1, c, n-1);
+                int b = area(0, r, 0, c-1);
+                int c2 = area(r+1, m-1, 0, c-1);
+                ans = min(ans, a + b + c2);
+            }
+        }
+        
+        return ans;
+    }
+};
