@@ -1,0 +1,30 @@
+int numSubmat(int** mat, int m, int* n) {
+    int cols = *n;
+    int widths[m][cols];
+    memset(widths, 0, sizeof(widths));
+
+   
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (mat[i][j] == 1) {
+                widths[i][j] = (j > 0 ? widths[i][j-1] : 0) + 1;
+            } else {
+                widths[i][j] = 0;
+            }
+        }
+    }
+
+   
+    int total = 0;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < cols; j++) {
+            int minWidth = widths[i][j];
+            for (int k = i; k >= 0 && minWidth > 0; k--) {
+                if (widths[k][j] < minWidth)
+                    minWidth = widths[k][j];
+                total += minWidth;
+            }
+        }
+    }
+    return total;
+}
