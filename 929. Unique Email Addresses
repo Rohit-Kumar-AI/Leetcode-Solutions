@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_LEN 100
+
+bool exists(char **set, int size, const char *email) {
+    for (int i = 0; i < size; i++) {
+        if (strcmp(set[i], email) == 0) return true;
+    }
+    return false;
+}
+
+int numUniqueEmails(char **emails, int emailsSize) {
+    char **set = malloc(emailsSize * sizeof(char *));
+    int uniqueCount = 0;
+    for (int i = 0; i < emailsSize; i++) {
+        char cleaned[MAX_LEN], normalized[MAX_LEN * 2];
+        char *at = strchr(emails[i], '@');
+        int idx = 0;
+        for (int j = 0; j < at - emails[i]; j++) {
+            if (emails[i][j] == '+') break;
+            if (emails[i][j] != '.') cleaned[idx++] = emails[i][j];
+        }
+        cleaned[idx] = '\0';
+        sprintf(normalized, "%s@%s", cleaned, at + 1);
+        if (!exists(set, uniqueCount, normalized)) {
+            set[uniqueCount] = strdup(normalized);
+            uniqueCount++;
+        }
+    }
+    for (int i = 0; i < uniqueCount; i++) free(set[i]);
+    free(set);
+    return uniqueCount;
+}
