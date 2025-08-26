@@ -1,0 +1,21 @@
+int areaOfMaxDiagonal(int** dimensions, int dimensionsSize, int* dimensionsColSize) {
+    long long max_d2 = -1;
+    long long best_area = 0;
+
+    for (int i = 0; i < dimensionsSize; i++) {
+        long long l = dimensions[i][0];
+        long long w = dimensions[i][1];
+
+        long long d2 = l * l + w * w;  
+        long long area = l * w;
+
+        if (d2 > max_d2) {
+            max_d2 = d2;
+            best_area = area;
+        } else if (d2 == max_d2 && area > best_area) {
+            best_area = area;
+        }
+    }
+
+    return (int)best_area;
+}
