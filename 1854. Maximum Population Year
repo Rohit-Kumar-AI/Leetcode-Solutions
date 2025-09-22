@@ -1,0 +1,16 @@
+int maximumPopulation(int** logs, int logsSize, int* logsColSize) {
+    int year[2051] = {0};
+    for (int i = 0; i < logsSize; i++) {
+        year[logs[i][0]]++;
+        year[logs[i][1]]--;
+    }
+    int curr = 0, mx = 0, ans = 0;
+    for (int i = 1950; i <= 2050; i++) {
+        curr += year[i];
+        if (curr > mx) {
+            mx = curr;
+            ans = i;
+        }
+    }
+    return ans;
+}
