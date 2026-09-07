@@ -1,0 +1,31 @@
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if (root == NULL) return NULL;
+
+        queue<Node*> q;
+        q.push(root);
+
+        while (!q.empty()) {
+            int level_size = q.size();
+
+            for (int i = 0; i < level_size; i++) {
+                Node* curr = q.front();
+                q.pop();
+
+                if (i == level_size - 1)
+                    curr->next = NULL;
+                else
+                    curr->next = q.front();
+
+                if (curr->left)
+                    q.push(curr->left);
+
+                if (curr->right)
+                    q.push(curr->right);
+            }
+        }
+
+        return root;
+    }
+};
