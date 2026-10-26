@@ -1,0 +1,51 @@
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        unordered_set<string> dead(deadends.begin(), deadends.end());
+
+        string start = "0000";
+
+        if (dead.count(start)) return -1;
+        if (target == start) return 0;
+
+        unordered_set<string> front{start};
+        unordered_set<string> back{target};
+        unordered_set<string> visited{start, target};
+
+        int steps = 0;
+
+        while (!front.empty() && !back.empty()) {
+            if (front.size() > back.size()) {
+                swap(front, back);
+            }
+
+            unordered_set<string> next;
+
+            for (string curr : front) {
+                if (back.count(curr)) return steps;
+
+                for (int i = 0; i < 4; i++) {
+                    string up = curr;
+                    string down = curr;
+
+                    up[i] = (curr[i] == '9') ? '0' : curr[i] + 1;
+                    down[i] = (curr[i] == '0') ? '9' : curr[i] - 1;
+
+                    for (string state : {up, down}) {
+                        if (back.count(state)) return steps + 1;
+
+                        if (!dead.count(state) && !visited.count(state)) {
+                            visited.insert(state);
+                            next.insert(state);
+                        }
+                    }
+                }
+            }
+
+            front = move(next);
+            steps++;
+        }
+
+        return -1;
+    }
+};
