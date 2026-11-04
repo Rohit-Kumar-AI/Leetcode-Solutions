@@ -1,0 +1,95 @@
+class Solution {
+    multiset<int> low, high;
+    long long sumLow = 0, sumHigh = 0;
+
+    void balance() {
+        while (low.size() < high.size()) {
+            int x = *high.begin();
+            high.erase(high.begin());
+            sumHigh -= x;
+            low.insert(x);
+            sumLow += x;
+        }
+
+        while (low.size() > high.size() + 1) {
+            int x = *low.rbegin();
+            low.erase(prev(low.end()));
+            sumLow -= x;
+            high.insert(x);
+            sumHigh += x;
+        }
+    }
+
+    void add(int x) {
+        if (low.empty() || x <= *low.rbegin()) {
+            low.insert(x);
+            sumLow += x;
+        } else {
+            high.insert(x);
+            sumHigh += x;
+        }
+        balance();
+    }
+
+    void remove(int x) {
+        auto it = low.find(x);
+
+        if (it != low.end()) {
+            low.erase(it);
+            sumLow -= x;
+        } else {
+            it = high.find(x);
+            high.erase(it);
+            sumHigh -= x;
+        }
+
+        balance();
+    }
+
+    long long getCost() {
+        long long median = *low.rbegin();
+        return median * (long long)low.size() - sumLow
+             + sumHigh - median * (long long)high.size();
+    }
+
+public:
+    long long minOperations(vector<int>& nums, int x, int k) {
+        int n = nums.size();
+        vector<long long> cost(n - x + 1);
+
+        low.clear();
+        high.clear();
+        sumLow = sumHigh = 0;
+
+        for (int i = 0; i < x; i++)
+            add(nums[i]);
+
+        cost[0] = getCost();
+
+        for (int i = x; i < n; i++) {
+            remove(nums[i - x]);
+            add(nums[i]);
+            cost[i - x + 1] = getCost();
+        }
+
+        const long long INF = LLONG_MAX / 4;
+        vector<long long> prev(n + 1, 0), cur(n + 1, INF);
+
+        for (int t = 1; t <= k; t++) {
+            fill(cur.begin(), cur.end(), INF);
+
+            for (int i = 1; i <= n; i++) {
+                cur[i] = cur[i - 1];
+
+                if (i >= x && prev[i - x] != INF) {
+                    cur[i] = min(cur[i],
+                                 prev[i - x] + cost[i - x]);
+                }
+            }
+
+            prev.swap(cur);
+        }
+
+        return prev[n];
+    }
+};
