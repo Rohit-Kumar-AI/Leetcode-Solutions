@@ -1,0 +1,30 @@
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if (digits.empty()) return {};
+
+        vector<string> mp = {
+            "", "", "abc", "def", "ghi",
+            "jkl", "mno", "pqrs", "tuv", "wxyz"
+        };
+
+        vector<string> ans;
+        string path;
+
+        function<void(int)> backtrack = [&](int idx) {
+            if (idx == digits.size()) {
+                ans.push_back(path);
+                return;
+            }
+
+            for (char c : mp[digits[idx] - '0']) {
+                path.push_back(c);
+                backtrack(idx + 1);
+                path.pop_back();
+            }
+        };
+
+        backtrack(0);
+        return ans;
+    }
+};
